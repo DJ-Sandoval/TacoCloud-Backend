@@ -117,4 +117,83 @@ public class NegocioService {
                         .anyMatch(user -> user.getId().equals(usuarioId)))
                 .orElse(false);
     }
+
+    @Transactional
+    public NegocioDTO createNegocioSinUsuario(NegocioDTO negocioDTO) {
+        // Verificar si ya existe un negocio con el mismo nombre
+        if (negocioRepository.existsByNombre(negocioDTO.getNombre())) {
+            throw new RuntimeException("Ya existe un negocio con el nombre: " + negocioDTO.getNombre());
+        }
+
+        Negocio negocio = Negocio.builder()
+                .nombre(negocioDTO.getNombre())
+                .descripcion(negocioDTO.getDescripcion())
+                .build();
+
+        Negocio negocioGuardado = negocioRepository.save(negocio);
+        return NegocioDTO.fromNegocio(negocioGuardado);
+    }
+
+    @Transactional
+    public NegocioDTO asignarUsuarioANegocio(Long negocioId, Long usuarioId) {
+        Negocio negocio = negocioRepository.findById(negocioId)
+                .orElseThrow(() -> new RuntimeException("Negocio no encontrado con ID: " + negocioId));
+
+        User usuario = userRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
+
+        // Verificar si el usuario ya tiene acceso a este negocio
+        boolean yaTieneAcceso = negocio.getUsuarios().stream()
+                .anyMatch(user -> user.getId().equals(usuarioId));
+
+        if (yaTieneAcceso) {
+            throw new RuntimeException("El usuario ya tiene acceso a este negocio");
+        }
+
+        // Asignar el negocio al usuario
+        usuario.addNegocio(negocio);
+        userRepository.save(usuario);
+
+        return NegocioDTO.fromNegocio(negocio);
+    }
+
+    @Transactional
+    public NegocioDTO removerUsuarioDeNegocio(Long negocioId, Long usuarioId) {
+        Negocio negocio = negocioRepository.findById(negocioId)
+                .orElseThrow(() -> new RuntimeException("Negocio no encontrado con ID: " + negocioId));
+
+        User usuario = userRepository.findById(usuarioId)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + usuarioId));
+
+        // Verificar si el usuario tiene acceso a este negocio
+        boolean tieneAcceso = negocio.getUsuarios().stream()
+                .anyMatch(user -> user.getId().equals(usuarioId));
+
+        if (!tieneAcceso) {
+            throw new RuntimeException("El usuario no tiene acceso a este negocio");
+        }
+
+        // Remover el negocio del usuario
+        usuario.removeNegocio(negocio);
+        userRepository.save(usuario);
+
+        return NegocioDTO.fromNegocio(negocio);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NegocioDTO> getAllNegocios() {
+        return negocioRepository.findAll().stream()
+                .map(NegocioDTO::fromNegocio)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void deleteNegocioAdmin(Long negocioId) {
+        Negocio negocio = negocioRepository.findById(negocioId)
+                .orElseThrow(() -> new RuntimeException("Negocio no encontrado con ID: " + negocioId));
+
+        // Remover el negocio de todos los usuarios antes de eliminar
+        negocio.getUsuarios().forEach(usuario -> usuario.removeNegocio(negocio));
+        negocioRepository.delete(negocio);
+    }
 }

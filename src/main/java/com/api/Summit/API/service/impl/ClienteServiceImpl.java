@@ -73,12 +73,16 @@ public class ClienteServiceImpl implements ClienteService {
 
         Cliente cliente = new Cliente();
         cliente.setNombre(clienteRequestDTO.getNombre());
+        cliente.setTelefono(clienteRequestDTO.getTelefono());
+        cliente.setEmail(clienteRequestDTO.getEmail());
+        cliente.setDireccion(clienteRequestDTO.getDireccion());
+        cliente.setFrecuente(clienteRequestDTO.getFrecuente() != null ? clienteRequestDTO.getFrecuente() : false);
         cliente.setNegocio(negocio);
-        // Puedes setear otros campos si los agregas al DTO
 
         Cliente clienteGuardado = clienteRepository.save(cliente);
         return convertToDTO(clienteGuardado);
     }
+
 
     @Override
     @Transactional
@@ -97,8 +101,12 @@ public class ClienteServiceImpl implements ClienteService {
             throw new RuntimeException("Ya existe otro cliente con el nombre: " + clienteRequestDTO.getNombre() + " en este negocio");
         }
 
-        cliente.setNombre(clienteRequestDTO.getNombre());
         // Actualizar otros campos si están en el DTO
+        cliente.setNombre(clienteRequestDTO.getNombre());
+        cliente.setTelefono(clienteRequestDTO.getTelefono());
+        cliente.setEmail(clienteRequestDTO.getEmail());
+        cliente.setDireccion(clienteRequestDTO.getDireccion());
+        cliente.setFrecuente(clienteRequestDTO.getFrecuente() != null ? clienteRequestDTO.getFrecuente() : cliente.getFrecuente());
 
         Cliente clienteActualizado = clienteRepository.save(cliente);
         return convertToDTO(clienteActualizado);
@@ -124,6 +132,10 @@ public class ClienteServiceImpl implements ClienteService {
         return ClienteDTO.builder()
                 .id(cliente.getId())
                 .nombre(cliente.getNombre())
+                .telefono(cliente.getTelefono())
+                .email(cliente.getEmail())
+                .direccion(cliente.getDireccion())
+                .frecuente(cliente.getFrecuente() != null ? cliente.getFrecuente() : false)
                 .build();
     }
 
@@ -134,6 +146,17 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setNombre(clienteDTO.getNombre());
         cliente.setNegocio(negocio);
         return cliente;
+    }
+
+    // Agregar este método en ClienteServiceImpl.java
+    @Transactional
+    public void deleteByIdAndNegocioId(Long id, Long negocioId) {
+        // Verificar que el cliente exista y pertenezca al negocio
+        Cliente cliente = clienteRepository.findByIdAndNegocioId(id, negocioId)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID: " + id + " para el negocio: " + negocioId));
+
+        // Eliminar el cliente
+        clienteRepository.delete(cliente);
     }
 
 

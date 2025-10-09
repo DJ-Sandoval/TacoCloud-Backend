@@ -17,4 +17,5 @@ public interface ClienteService {
     ClienteDTO updateWithNegocio(Long id, ClienteRequestDTO clienteRequestDTO, Long negocioId);
     Page<ClienteDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
     Page<ClienteDTO> findFrecuentesByNegocioId(Long negocioId, Pageable pageable);
+    void deleteByIdAndNegocioId(Long id, Long negocioId);
 }

@@ -104,4 +104,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         });
         tokenRepository.saveAll(validUserTokens);
     }
+
+    // Metodo para ver los negocios disponibles
+    public Set<Negocio> getNegociosDisponibles() {
+        return new HashSet<>(negocioRepository.findAll());
+    }
 }

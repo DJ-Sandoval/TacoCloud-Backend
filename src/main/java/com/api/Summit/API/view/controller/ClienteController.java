@@ -93,4 +93,19 @@ public class ClienteController {
         Page<ClienteDTO> clientes = clienteService.findFrecuentesByNegocioId(negocioId, pageable);
         return ResponseEntity.ok(clientes);
     }
+
+    @DeleteMapping("/{id}/negocio/{negocioId}")
+    public ResponseEntity<ApiResponse<String>> deleteCliente(
+            @PathVariable Long id,
+            @PathVariable Long negocioId) {
+
+        try {
+            clienteService.deleteByIdAndNegocioId(id, negocioId);
+            return ResponseEntity.ok(ApiResponse.success("Cliente eliminado correctamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
 }
