@@ -4,7 +4,6 @@ package com.api.Summit.API.view.controller;
 import com.api.Summit.API.service.exception.ApiResponse;
 import com.api.Summit.API.service.interfaces.CategoriaService;
 import com.api.Summit.API.view.dto.CategoriaDTO;
-import com.api.Summit.API.view.dto.CategoriaDetailDTO;
 import com.api.Summit.API.view.dto.CategoriaRequestDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

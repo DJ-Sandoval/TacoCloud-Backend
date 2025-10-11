@@ -1,8 +1,10 @@
 package com.api.Summit.API.service.impl;
 
 import com.api.Summit.API.model.entities.Categoria;
+import com.api.Summit.API.model.entities.Negocio;
 import com.api.Summit.API.model.entities.Producto;
 import com.api.Summit.API.model.repository.CategoriaRepository;
+import com.api.Summit.API.model.repository.NegocioRepository;
 import com.api.Summit.API.model.repository.ProductoRepository;
 import com.api.Summit.API.service.exception.BusinessException;
 import com.api.Summit.API.service.exception.ResourceNotFoundException;
@@ -26,201 +28,181 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class ProductoServiceImpl implements ProductoService {
-
     private final ProductoRepository productoRepository;
+    private final NegocioRepository negocioRepository;
     private final CategoriaRepository categoriaRepository;
-    /*
+
     @Override
     @Transactional(readOnly = true)
     public Page<ProductoDTO> findAll(Pageable pageable) {
-        try {
-            log.info("Obteniendo todos los productos paginados");
-            return productoRepository.findAll(pageable)
-                    .map(this::convertToDTO);
-        } catch (Exception e) {
-            log.error("Error al obtener productos paginados: {}", e.getMessage());
-            throw new BusinessException("Error al obtener la lista de productos");
-        }
+        throw new UnsupportedOperationException("Use findAllByNegocioId instead");
     }
 
     @Override
     @Transactional(readOnly = true)
-    public ProductoDetailDTO findById(Long id) {
-        try {
-            log.info("Buscando producto con ID: {}", id);
-            Producto producto = productoRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
-            return convertToDetailDTO(producto);
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error al buscar producto con ID {}: {}", id, e.getMessage());
-            throw new BusinessException("Error al buscar el producto");
-        }
+    public ProductoDTO findById(Long id) {
+        throw new UnsupportedOperationException("Use findByIdAndNegocioId instead");
     }
 
     @Override
     @Transactional
     public ProductoDTO save(ProductoRequestDTO productoRequestDTO) {
-        try {
-            log.info("Creando nuevo producto: {}", productoRequestDTO.getNombre());
-
-            // Validar si ya existe un producto con el mismo nombre
-            if (productoRepository.existsByNombre(productoRequestDTO.getNombre())) {
-                throw new BusinessException("Ya existe un producto con el nombre: " + productoRequestDTO.getNombre());
-            }
-
-            Producto producto = new Producto();
-            producto.setNombre(productoRequestDTO.getNombre());
-            producto.setPrecioUnitario(productoRequestDTO.getPrecioUnitario());
-            producto.setCosto(productoRequestDTO.getCosto());
-            producto.setCategorias(new HashSet<>());
-
-            // Asignar categorías si se proporcionan
-            if (productoRequestDTO.getCategoriasIds() != null && !productoRequestDTO.getCategoriasIds().isEmpty()) {
-                for (Long categoriaId : productoRequestDTO.getCategoriasIds()) {
-                    Categoria categoria = categoriaRepository.findById(categoriaId)
-                            .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
-                    producto.addCategoria(categoria);
-                }
-            }
-
-            Producto savedProducto = productoRepository.save(producto);
-            log.info("Producto creado exitosamente con ID: {}", savedProducto.getId());
-
-            return convertToDTO(savedProducto);
-        } catch (BusinessException | ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error al crear producto: {}", e.getMessage());
-            throw new BusinessException("Error al crear el producto");
-        }
+        throw new UnsupportedOperationException("Use saveWithNegocio instead");
     }
 
     @Override
     @Transactional
     public ProductoDTO update(Long id, ProductoRequestDTO productoRequestDTO) {
-        try {
-            log.info("Actualizando producto con ID: {}", id);
-
-            Producto producto = productoRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
-
-            // Validar si el nuevo nombre ya existe en otro producto
-            if (productoRepository.existsByNombreAndIdNot(productoRequestDTO.getNombre(), id)) {
-                throw new BusinessException("Ya existe otro producto con el nombre: " + productoRequestDTO.getNombre());
-            }
-
-            producto.setNombre(productoRequestDTO.getNombre());
-            producto.setPrecioUnitario(productoRequestDTO.getPrecioUnitario());
-            producto.setCosto(productoRequestDTO.getCosto());
-
-            // Actualizar categorías
-            if (productoRequestDTO.getCategoriasIds() != null) {
-                // Limpiar categorías existentes
-                producto.getCategorias().clear();
-
-                // Agregar nuevas categorías
-                for (Long categoriaId : productoRequestDTO.getCategoriasIds()) {
-                    Categoria categoria = categoriaRepository.findById(categoriaId)
-                            .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + categoriaId));
-                    producto.addCategoria(categoria);
-                }
-            }
-
-            Producto updatedProducto = productoRepository.save(producto);
-            log.info("Producto actualizado exitosamente con ID: {}", id);
-
-            return convertToDTO(updatedProducto);
-        } catch (ResourceNotFoundException | BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error al actualizar producto con ID {}: {}", id, e.getMessage());
-            throw new BusinessException("Error al actualizar el producto");
-        }
+        throw new UnsupportedOperationException("Use updateWithNegocio instead");
     }
 
     @Override
     @Transactional
-    public void delete(Long id) {
-        try {
-            log.info("Eliminando producto con ID: {}", id);
+    public void deleteById(Long id) {
+        throw new UnsupportedOperationException("Use deleteByIdAndNegocioId instead");
+    }
 
-            Producto producto = productoRepository.findById(id)
-                    .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con ID: " + id));
+    // Listar productos por negocio
+    @Transactional(readOnly = true)
+    public Page<ProductoDTO> findAllByNegocioId(Long negocioId, Pageable pageable) {
+        Page<Producto> productos = productoRepository.findByNegocioId(negocioId, pageable);
+        return productos.map(this::convertToDTO);
+    }
 
-            // Verificar si el producto tiene conceptos de venta asociados
+    // Buscar producto por ID y negocio
+    @Transactional(readOnly = true)
+    public ProductoDTO findByIdAndNegocioId(Long id, Long negocioId) {
+        Producto producto = productoRepository.findByIdAndNegocioId(id, negocioId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id + " para el negocio: " + negocioId));
+        return convertToDTO(producto);
+    }
 
-            if (producto.getConceptoVenta() != null && !producto.getConceptoVenta().isEmpty()) {
-                throw new BusinessException("No se puede eliminar el producto porque tiene ventas asociadas");
+    // Crear producto asociado a un negocio
+    // Crear producto asociado a un negocio
+    @Transactional
+    public ProductoDTO saveWithNegocio(ProductoRequestDTO productoRequestDTO, Long negocioId) {
+        // Verificar si ya existe un producto con el mismo nombre en este negocio
+        if (productoRepository.existsByNombreAndNegocioId(productoRequestDTO.getNombre(), negocioId)) {
+            throw new RuntimeException("Ya existe un producto con el nombre: " + productoRequestDTO.getNombre() + " en este negocio");
+        }
+
+        Negocio negocio = negocioRepository.findById(negocioId)
+                .orElseThrow(() -> new RuntimeException("Negocio no encontrado con ID: " + negocioId));
+
+        Producto producto = new Producto();
+        producto.setNombre(productoRequestDTO.getNombre());
+        producto.setPrecioUnitario(productoRequestDTO.getPrecioUnitario());
+        producto.setCosto(productoRequestDTO.getCosto());
+        producto.setNegocio(negocio);
+
+        // Asignar categorías si se proporcionan - CORREGIDO
+        if (productoRequestDTO.getCategoriasIds() != null && !productoRequestDTO.getCategoriasIds().isEmpty()) {
+            Set<Categoria> categorias = new HashSet<>();
+
+            for (Long categoriaId : productoRequestDTO.getCategoriasIds()) {
+                Categoria categoria = categoriaRepository.findById(categoriaId)
+                        .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + categoriaId));
+
+                // Verificar que la categoría pertenezca al mismo negocio
+                if (!categoria.getNegocio().getId().equals(negocioId)) {
+                    throw new RuntimeException("La categoría con ID: " + categoriaId + " no pertenece al negocio: " + negocioId);
+                }
+
+                categorias.add(categoria);
             }
 
-            // Limpiar relaciones con categorías antes de eliminar
-            producto.getCategorias().clear();
-            productoRepository.save(producto); // Guardar cambios para limpiar relaciones
+            producto.setCategorias(categorias);
 
-            productoRepository.deleteById(id);
-            log.info("Producto eliminado exitosamente con ID: {}", id);
-
-        } catch (ResourceNotFoundException | BusinessException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Error al eliminar producto con ID {}: {}", id, e.getMessage());
-            throw new BusinessException("Error al eliminar el producto");
+            // Establecer la relación bidireccional
+            for (Categoria categoria : categorias) {
+                categoria.getProductos().add(producto);
+            }
         }
+
+        Producto productoGuardado = productoRepository.save(producto);
+        return convertToDTO(productoGuardado);
     }
 
+    // Actualizar producto verificando el negocio
+    // Actualizar producto verificando el negocio
+    @Transactional
+    public ProductoDTO updateWithNegocio(Long id, ProductoRequestDTO productoRequestDTO, Long negocioId) {
+        Producto producto = productoRepository.findByIdAndNegocioId(id, negocioId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id + " para el negocio: " + negocioId));
+
+        // Verificar si el nuevo nombre ya existe en otro producto del mismo negocio
+        if (productoRepository.existsByNombreAndNegocioIdAndIdNot(productoRequestDTO.getNombre(), negocioId, id)) {
+            throw new RuntimeException("Ya existe otro producto con el nombre: " + productoRequestDTO.getNombre() + " en este negocio");
+        }
+
+        producto.setNombre(productoRequestDTO.getNombre());
+        producto.setPrecioUnitario(productoRequestDTO.getPrecioUnitario());
+        producto.setCosto(productoRequestDTO.getCosto());
+
+        // Actualizar categorías si se proporcionan - CORREGIDO
+        if (productoRequestDTO.getCategoriasIds() != null) {
+            // Limpiar categorías existentes
+            for (Categoria categoria : new HashSet<>(producto.getCategorias())) {
+                categoria.getProductos().remove(producto);
+            }
+            producto.getCategorias().clear();
+
+            // Agregar nuevas categorías
+            Set<Categoria> nuevasCategorias = new HashSet<>();
+            for (Long categoriaId : productoRequestDTO.getCategoriasIds()) {
+                Categoria categoria = categoriaRepository.findById(categoriaId)
+                        .orElseThrow(() -> new RuntimeException("Categoría no encontrada con ID: " + categoriaId));
+
+                // Verificar que la categoría pertenezca al mismo negocio
+                if (!categoria.getNegocio().getId().equals(negocioId)) {
+                    throw new RuntimeException("La categoría con ID: " + categoriaId + " no pertenece al negocio: " + negocioId);
+                }
+
+                nuevasCategorias.add(categoria);
+                categoria.getProductos().add(producto);
+            }
+
+            producto.setCategorias(nuevasCategorias);
+        }
+
+        Producto productoActualizado = productoRepository.save(producto);
+        return convertToDTO(productoActualizado);
+    }
+
+    // Buscar productos por nombre en un negocio específico
+    @Transactional(readOnly = true)
+    public Page<ProductoDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable) {
+        Page<Producto> productos = productoRepository.findByNegocioIdAndNombreContainingIgnoreCase(negocioId, nombre, pageable);
+        return productos.map(this::convertToDTO);
+    }
+
+    // Eliminar producto verificando el negocio
+    @Transactional
+    public void deleteByIdAndNegocioId(Long id, Long negocioId) {
+        Producto producto = productoRepository.findByIdAndNegocioId(id, negocioId)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id + " para el negocio: " + negocioId));
+
+        productoRepository.delete(producto);
+    }
+
+    // Método de conversión a DTO
+    // Método de conversión a DTO
     private ProductoDTO convertToDTO(Producto producto) {
-        Set<CategoriaDTO> categoriasDTO = producto.getCategorias().stream()
-                .map(this::convertCategoriaToDTO)
-                .collect(Collectors.toSet());
-
-        return new ProductoDTO(
-                producto.getId(),
-                producto.getNombre(),
-                producto.getPrecioUnitario(),
-                producto.getCosto(),
-                categoriasDTO
-        );
+        return ProductoDTO.builder()
+                .id(producto.getId())
+                .nombre(producto.getNombre())
+                .precioUnitario(producto.getPrecioUnitario())
+                .costo(producto.getCosto())
+                .negocioId(producto.getNegocio().getId())
+                .categorias(producto.getCategorias() != null ?
+                        producto.getCategorias().stream()
+                                .map(categoria -> CategoriaSimpleDTO.builder() // Usar CategoriaSimpleDTO
+                                        .id(categoria.getId())
+                                        .nombre(categoria.getNombre())
+                                        .descripcion(categoria.getDescripcion())
+                                        .negocioId(categoria.getNegocio().getId()) // Agregar negocioId
+                                        .build())
+                                .collect(Collectors.toSet()) : null)
+                .build();
     }
-
-    private ProductoDetailDTO convertToDetailDTO(Producto producto) {
-        Set<CategoriaDTO> categoriasDTO = producto.getCategorias().stream()
-                .map(this::convertCategoriaToDTO)
-                .collect(Collectors.toSet());
-
-        var conceptosDTO = producto.getConceptoVenta().stream()
-                .map(concepto -> new ConceptoDTO(
-                        concepto.getId(),
-                        concepto.getCantidad(),
-                        concepto.getPrecioUnitario(),
-                        concepto.getImporte(),
-                        concepto.getVenta().getId(),
-                        concepto.getProducto().getId(),
-                        concepto.getProducto().getNombre(),
-                        concepto.getProducto().getPrecioUnitario()
-                ))
-                .collect(Collectors.toList());
-
-        return new ProductoDetailDTO(
-                producto.getId(),
-                producto.getNombre(),
-                producto.getPrecioUnitario(),
-                producto.getCosto(),
-                categoriasDTO,
-                conceptosDTO
-        );
-
-
-    }
-
-    private CategoriaDTO convertCategoriaToDTO(Categoria categoria) {
-        return new CategoriaDTO(
-                categoria.getId(),
-                categoria.getNombre(),
-                categoria.getDescripcion()
-        );
-    }
-    */
-
 }

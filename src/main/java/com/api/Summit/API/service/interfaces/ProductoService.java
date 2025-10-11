@@ -6,9 +6,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ProductoService {
-    //Page<ProductoDTO> findAll(Pageable pageable);
-    //ProductoDetailDTO findById(Long id);
-    //ProductoDTO save(ProductoRequestDTO productoRequestDTO);
-    //ProductoDTO update(Long id, ProductoRequestDTO productoRequestDTO);
-    //void delete(Long id);
+    Page<ProductoDTO> findAll(Pageable pageable);
+    ProductoDTO findById(Long id);
+    ProductoDTO save(ProductoRequestDTO productoRequestDTO);
+    ProductoDTO update(Long id, ProductoRequestDTO productoRequestDTO);
+    void deleteById(Long id);
+
+    // Métodos con filtro por negocio
+    Page<ProductoDTO> findAllByNegocioId(Long negocioId, Pageable pageable);
+    ProductoDTO findByIdAndNegocioId(Long id, Long negocioId);
+    ProductoDTO saveWithNegocio(ProductoRequestDTO productoRequestDTO, Long negocioId);
+    ProductoDTO updateWithNegocio(Long id, ProductoRequestDTO productoRequestDTO, Long negocioId);
+    Page<ProductoDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
+    void deleteByIdAndNegocioId(Long id, Long negocioId);
 }

@@ -2,17 +2,15 @@ package com.api.Summit.API.view.dto;
 
 import lombok.*;
 
-import java.util.Set;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoriaDTO {
+public class ProductoSimpleDTO {
     private Long id;
     private String nombre;
-    private String descripcion;
+    private double precioUnitario;
+    private double costo;
     private Long negocioId;
-    private Set<ProductoSimpleDTO> productos; // Cambiado a ProductoSimpleDTO
 }

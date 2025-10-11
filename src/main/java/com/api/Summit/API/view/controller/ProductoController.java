@@ -5,6 +5,7 @@ import com.api.Summit.API.service.interfaces.ProductoService;
 import com.api.Summit.API.view.dto.ProductoDTO;
 import com.api.Summit.API.view.dto.ProductoDetailDTO;
 import com.api.Summit.API.view.dto.ProductoRequestDTO;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
@@ -19,48 +20,79 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/productos")
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 public class ProductoController {
-    /*
     private final ProductoService productoService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Page<ProductoDTO>>> getAllProductos(
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<ProductoDTO> productos = productoService.findAll(pageable);
-        return ResponseEntity.ok(ApiResponse.success(productos, "Productos obtenidos exitosamente"));
+    // Listar productos por negocio (con paginación)
+    @GetMapping("/negocio/{negocioId}")
+    public ResponseEntity<Page<ProductoDTO>> getProductosByNegocio(
+            @PathVariable Long negocioId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductoDTO> productos = productoService.findAllByNegocioId(negocioId, pageable);
+        return ResponseEntity.ok(productos);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductoDetailDTO>> getProductoById(@PathVariable Long id) {
-        ProductoDetailDTO producto = productoService.findById(id);
-        return ResponseEntity.ok(ApiResponse.success(producto, "Producto obtenido exitosamente"));
-    }
-
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductoDTO>> createProducto(@Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
-        ProductoDTO nuevoProducto = productoService.save(productoRequestDTO);
-        return new ResponseEntity<>(ApiResponse.success(nuevoProducto, "Producto creado exitosamente"), HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<ProductoDTO>> updateProducto(
+    // Buscar producto por ID y negocio
+    @GetMapping("/{id}/negocio/{negocioId}")
+    public ResponseEntity<ProductoDTO> getProductoById(
             @PathVariable Long id,
-            @Valid @RequestBody ProductoRequestDTO productoRequestDTO) {
-        ProductoDTO productoActualizado = productoService.update(id, productoRequestDTO);
-        return ResponseEntity.ok(ApiResponse.success(productoActualizado, "Producto actualizado exitosamente"));
+            @PathVariable Long negocioId) {
+
+        ProductoDTO producto = productoService.findByIdAndNegocioId(id, negocioId);
+        return ResponseEntity.ok(producto);
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deleteProducto(@PathVariable Long id) {
-        productoService.delete(id);
-        return ResponseEntity.ok(ApiResponse.success("Producto eliminado exitosamente"));
+    // Crear nuevo producto en un negocio
+    @PostMapping("/negocio/{negocioId}")
+    public ResponseEntity<ProductoDTO> createProducto(
+            @Valid @RequestBody ProductoRequestDTO productoRequestDTO,
+            @PathVariable Long negocioId) {
+
+        ProductoDTO nuevoProducto = productoService.saveWithNegocio(productoRequestDTO, negocioId);
+        return ResponseEntity.ok(nuevoProducto);
     }
 
-     */
+    // Actualizar producto en un negocio
+    @PutMapping("/{id}/negocio/{negocioId}")
+    public ResponseEntity<ProductoDTO> updateProducto(
+            @PathVariable Long id,
+            @Valid @RequestBody ProductoRequestDTO productoRequestDTO,
+            @PathVariable Long negocioId) {
+
+        ProductoDTO productoActualizado = productoService.updateWithNegocio(id, productoRequestDTO, negocioId);
+        return ResponseEntity.ok(productoActualizado);
+    }
+
+    // Buscar productos por nombre en un negocio
+    @GetMapping("/negocio/{negocioId}/buscar")
+    public ResponseEntity<Page<ProductoDTO>> searchProductos(
+            @PathVariable Long negocioId,
+            @RequestParam String nombre,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        Page<ProductoDTO> productos = productoService.searchByNombreAndNegocioId(nombre, negocioId, pageable);
+        return ResponseEntity.ok(productos);
+    }
+
+    // Eliminar producto de un negocio
+    @DeleteMapping("/{id}/negocio/{negocioId}")
+    public ResponseEntity<ApiResponse<String>> deleteProducto(
+            @PathVariable Long id,
+            @PathVariable Long negocioId) {
+
+        try {
+            productoService.deleteByIdAndNegocioId(id, negocioId);
+            return ResponseEntity.ok(ApiResponse.success("Producto eliminado correctamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
 }

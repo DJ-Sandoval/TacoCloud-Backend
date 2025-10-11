@@ -8,6 +8,7 @@ import com.api.Summit.API.service.interfaces.CategoriaService;
 import com.api.Summit.API.view.dto.CategoriaDTO;
 import com.api.Summit.API.view.dto.CategoriaRequestDTO;
 import com.api.Summit.API.view.dto.ProductoDTO;
+import com.api.Summit.API.view.dto.ProductoSimpleDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
@@ -126,6 +127,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     }
 
     // Método de conversión a DTO
+    // Método de conversión a DTO
     private CategoriaDTO convertToDTO(Categoria categoria) {
         return CategoriaDTO.builder()
                 .id(categoria.getId())
@@ -134,10 +136,12 @@ public class CategoriaServiceImpl implements CategoriaService {
                 .negocioId(categoria.getNegocio().getId())
                 .productos(categoria.getProductos() != null ?
                         categoria.getProductos().stream()
-                                .map(producto -> ProductoDTO.builder()
+                                .map(producto -> ProductoSimpleDTO.builder() // Usar ProductoSimpleDTO
                                         .id(producto.getId())
                                         .nombre(producto.getNombre())
-                                        // Agrega más campos si es necesario
+                                        .precioUnitario(producto.getPrecioUnitario())
+                                        .costo(producto.getCosto())
+                                        .negocioId(producto.getNegocio().getId()) // Agregar negocioId
                                         .build())
                                 .collect(Collectors.toSet()) : null)
                 .build();

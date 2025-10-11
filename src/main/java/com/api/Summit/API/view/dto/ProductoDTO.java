@@ -14,5 +14,6 @@ public class ProductoDTO {
     private String nombre;
     private double precioUnitario;
     private double costo;
-    private Set<CategoriaDTO> categorias;
+    private Long negocioId;
+    private Set<CategoriaSimpleDTO> categorias; // Cambiado a CategoriaSimpleDTO
 }

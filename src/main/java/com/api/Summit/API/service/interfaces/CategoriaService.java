@@ -1,6 +1,5 @@
 package com.api.Summit.API.service.interfaces;
 import com.api.Summit.API.view.dto.CategoriaDTO;
-import com.api.Summit.API.view.dto.CategoriaDetailDTO;
 import com.api.Summit.API.view.dto.CategoriaRequestDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
