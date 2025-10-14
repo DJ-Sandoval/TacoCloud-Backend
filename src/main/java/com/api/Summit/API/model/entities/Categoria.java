@@ -6,7 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "categorias")
+@Table(
+        name = "categorias",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"nombre", "negocio_id"})
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
@@ -17,7 +22,7 @@ public class Categoria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "nombre", nullable = false, length = 100, unique = true)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
 
     @Column(name = "descripcion", length = 255)
