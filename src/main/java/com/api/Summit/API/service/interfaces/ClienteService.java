@@ -18,4 +18,5 @@ public interface ClienteService {
     Page<ClienteDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
     Page<ClienteDTO> findFrecuentesByNegocioId(Long negocioId, Pageable pageable);
     void deleteByIdAndNegocioId(Long id, Long negocioId);
+    byte[] generateClientesReportPdf(Long negocioId, String tipoReporte);
 }

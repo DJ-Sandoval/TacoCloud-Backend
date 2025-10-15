@@ -4,6 +4,7 @@ import com.api.Summit.API.model.entities.Cliente;
 import com.api.Summit.API.model.entities.Negocio;
 import com.api.Summit.API.model.repository.ClienteRepository;
 import com.api.Summit.API.model.repository.NegocioRepository;
+import com.api.Summit.API.reports.pdf.service.ClienteReportService;
 import com.api.Summit.API.service.exception.BusinessException;
 import com.api.Summit.API.service.exception.ResourceNotFoundException;
 import com.api.Summit.API.service.interfaces.ClienteService;
@@ -26,6 +27,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final NegocioRepository negocioRepository;
+    private final ClienteReportService clienteReportService;
 
     @Override
     @Transactional(readOnly = true)
@@ -159,5 +161,10 @@ public class ClienteServiceImpl implements ClienteService {
         clienteRepository.delete(cliente);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] generateClientesReportPdf(Long negocioId, String tipoReporte) {
+        return clienteReportService.generateClientesReportPdf(negocioId, tipoReporte);
+    }
 
 }
