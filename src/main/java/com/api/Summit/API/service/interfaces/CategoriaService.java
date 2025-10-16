@@ -19,4 +19,5 @@ public interface CategoriaService {
     Page<CategoriaDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
     void deleteByIdAndNegocioId(Long id, Long negocioId);
     byte[] generateCategoriasReportPdf(Long negocioId, String tipoReporte);
+    byte[] generateCategoriasExcelReport(Long negocioId, String tipoReporte);
 }

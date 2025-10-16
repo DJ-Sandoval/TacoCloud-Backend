@@ -4,6 +4,7 @@ import com.api.Summit.API.model.entities.Categoria;
 import com.api.Summit.API.model.entities.Negocio;
 import com.api.Summit.API.model.repository.CategoriaRepository;
 import com.api.Summit.API.model.repository.NegocioRepository;
+import com.api.Summit.API.reports.excel.service.CategoriaExcelReportService;
 import com.api.Summit.API.reports.pdf.service.CategoriaReportService;
 import com.api.Summit.API.service.interfaces.CategoriaService;
 import com.api.Summit.API.view.dto.CategoriaDTO;
@@ -27,6 +28,7 @@ public class CategoriaServiceImpl implements CategoriaService {
     private final CategoriaRepository categoriaRepository;
     private final NegocioRepository negocioRepository;
     private final CategoriaReportService categoriaReportService;
+    private final CategoriaExcelReportService categoriaExcelReportService;
 
     @Override
     @Transactional(readOnly = true)
@@ -132,6 +134,12 @@ public class CategoriaServiceImpl implements CategoriaService {
     @Transactional(readOnly = true)
     public byte[] generateCategoriasReportPdf(Long negocioId, String tipoReporte) {
         return categoriaReportService.generateCategoriasReportPdf(negocioId, tipoReporte);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] generateCategoriasExcelReport(Long negocioId, String tipoReporte) {
+        return categoriaExcelReportService.generateCategoriasExcelReport(negocioId, tipoReporte);
     }
 
     // Método de conversión a DTO

@@ -32,9 +32,12 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/clientes/**").permitAll()
                         .requestMatchers("/api/categorias/**").permitAll()
                         .requestMatchers("/api/productos/**").permitAll()
+                        // Reportes pdf
                         .requestMatchers("/api/clientes/reportes/**").permitAll()
                         .requestMatchers("/api/categorias/reportes/**").permitAll()
                         .requestMatchers("/api/productos/reportes/**").permitAll()
+                        // Reportes excel
+                        // Privado
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
