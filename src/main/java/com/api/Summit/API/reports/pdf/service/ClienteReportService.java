@@ -1,7 +1,9 @@
 package com.api.Summit.API.reports.pdf.service;
 
 import com.api.Summit.API.model.entities.Cliente;
+import com.api.Summit.API.model.entities.Negocio;
 import com.api.Summit.API.model.repository.ClienteRepository;
+import com.api.Summit.API.model.repository.NegocioRepository;
 import com.api.Summit.API.view.dto.ClienteDTO;
 import com.api.Summit.API.view.dto.ClienteReportDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +22,16 @@ public class ClienteReportService {
 
     private final ClienteRepository clienteRepository;
     private final PdfReportService pdfReportService;
+    private final NegocioRepository negocioRepository;
 
     public byte[] generateClientesReportPdf(Long negocioId, String tipoReporte) {
         try {
             List<Cliente> clientes;
             String titulo = "";
+
+            // Obtener información del negocio
+            Negocio negocio = negocioRepository.findById(negocioId)
+                    .orElseThrow(() -> new RuntimeException("Negocio no encontrado con ID: " + negocioId));
 
             switch (tipoReporte.toLowerCase()) {
                 case "frecuentes":
@@ -52,6 +59,7 @@ public class ClienteReportService {
                     .clientes(clientesDTO)
                     .totalClientes(clientesDTO.size())
                     .totalFrecuentes(totalFrecuentes)
+                    .negocioNombre(negocio.getNombre()) // Agregar esta línea
                     .build();
 
             return pdfReportService.generateClientesReport(reportDTO);
@@ -61,6 +69,7 @@ public class ClienteReportService {
             throw new RuntimeException("Error al generar reporte: " + e.getMessage());
         }
     }
+
 
     private ClienteDTO convertToDTO(Cliente cliente) {
         return ClienteDTO.builder()

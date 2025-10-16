@@ -19,4 +19,5 @@ public interface ProductoService {
     ProductoDTO updateWithNegocio(Long id, ProductoRequestDTO productoRequestDTO, Long negocioId);
     Page<ProductoDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
     void deleteByIdAndNegocioId(Long id, Long negocioId);
+    byte[] generateProductosReportPdf(Long negocioId, String tipoReporte);
 }

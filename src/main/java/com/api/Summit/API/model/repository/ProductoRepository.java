@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -29,4 +30,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     boolean existsByNombreAndNegocioIdAndIdNot(@Param("nombre") String nombre, @Param("negocioId") Long negocioId, @Param("id") Long id);
 
     Page<Producto> findByNegocioIdAndNombreContainingIgnoreCase(Long negocioId, String nombre, Pageable pageable);
+    List<Producto> findByNegocioId(Long negocioId);
 }

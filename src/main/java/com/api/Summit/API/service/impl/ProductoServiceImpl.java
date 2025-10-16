@@ -6,6 +6,7 @@ import com.api.Summit.API.model.entities.Producto;
 import com.api.Summit.API.model.repository.CategoriaRepository;
 import com.api.Summit.API.model.repository.NegocioRepository;
 import com.api.Summit.API.model.repository.ProductoRepository;
+import com.api.Summit.API.reports.pdf.service.ProductoReportService;
 import com.api.Summit.API.service.exception.BusinessException;
 import com.api.Summit.API.service.exception.ResourceNotFoundException;
 import com.api.Summit.API.service.interfaces.ProductoService;
@@ -31,6 +32,7 @@ public class ProductoServiceImpl implements ProductoService {
     private final ProductoRepository productoRepository;
     private final NegocioRepository negocioRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ProductoReportService productoReportService;
 
     @Override
     @Transactional(readOnly = true)
@@ -183,6 +185,12 @@ public class ProductoServiceImpl implements ProductoService {
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + id + " para el negocio: " + negocioId));
 
         productoRepository.delete(producto);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public byte[] generateProductosReportPdf(Long negocioId, String tipoReporte) {
+        return productoReportService.generateProductosReportPdf(negocioId, tipoReporte);
     }
 
     // Método de conversión a DTO

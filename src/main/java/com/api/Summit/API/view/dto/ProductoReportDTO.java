@@ -9,11 +9,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClienteReportDTO {
+public class ProductoReportDTO {
     private String titulo;
     private String fechaGeneracion;
-    private List<ClienteDTO> clientes;
-    private int totalClientes;
-    private int totalFrecuentes;
+    private List<ProductoReportDataDTO> productos;
+    private int totalProductos;
+    private double valorTotalInventario;
+    private double precioPromedio;
     private String negocioNombre;
 }

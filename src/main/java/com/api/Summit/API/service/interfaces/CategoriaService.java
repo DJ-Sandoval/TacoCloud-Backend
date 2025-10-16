@@ -18,4 +18,5 @@ public interface CategoriaService {
     CategoriaDTO updateWithNegocio(Long id, CategoriaRequestDTO categoriaRequestDTO, Long negocioId);
     Page<CategoriaDTO> searchByNombreAndNegocioId(String nombre, Long negocioId, Pageable pageable);
     void deleteByIdAndNegocioId(Long id, Long negocioId);
+    byte[] generateCategoriasReportPdf(Long negocioId, String tipoReporte);
 }
