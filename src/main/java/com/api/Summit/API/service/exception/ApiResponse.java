@@ -29,4 +29,8 @@ public class ApiResponse<T> {
     public static <T> ApiResponse<T> error(String message) {
         return new ApiResponse<>(false, message, null, LocalDateTime.now(), null);
     }
+
+    public static <T> ApiResponse<T> success(T data) {
+        return new ApiResponse<>(true, "Operación exitosa", data, LocalDateTime.now(), null);
+    }
 }
