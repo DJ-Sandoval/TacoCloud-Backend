@@ -14,7 +14,8 @@ if [ $? -ne 0 ]; then
 fi
 
 echo -e "${GREEN}🐳 Construyendo la imagen Docker de Summit-API...${NC}"
-docker compose build summit-api
+docker compose build tacocloud-api
+
 
 if [ $? -ne 0 ]; then
   echo -e "${RED}❌ Falló la construcción de la imagen Docker.${NC}"
@@ -31,7 +32,7 @@ fi
 
 echo -e "${GREEN}✅ Servicios levantados correctamente.${NC}"
 
-echo -e "${GREEN}🔍 Verifica logs con:${NC} docker logs -f summit-api"
+echo -e "${GREEN}🔍 Verifica logs con:${NC} docker logs -f tacocloud-api"
 
 echo -e "${GREEN}🌐 Accede a la API en:${NC} http://localhost:8085"
 

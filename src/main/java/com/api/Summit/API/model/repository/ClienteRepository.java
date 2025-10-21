@@ -35,7 +35,8 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
 
     // Contar clientes por negocio
     long countByNegocioId(Long negocioId);
-
+    // En ClienteRepository.java, agrega este método:
     // Buscar clientes frecuentes por negocio
     List<Cliente> findByNegocioIdAndFrecuenteTrue(Long negocioId);
+
 }

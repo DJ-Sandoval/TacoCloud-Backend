@@ -18,6 +18,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/clientes")
 @CrossOrigin(origins = "*")
@@ -106,6 +109,13 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(ApiResponse.error(e.getMessage()));
         }
+    }
+
+    // Obtener el total de clientes por negocio
+    @GetMapping("/negocio/{negocioId}/total")
+    public ResponseEntity<Map<String, Long>> getTotalClientesByNegocio(@PathVariable Long negocioId) {
+        long totalClientes = clienteService.countByNegocioId(negocioId);
+        return ResponseEntity.ok(Collections.singletonMap("totalClientes", totalClientes));
     }
 
 }

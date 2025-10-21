@@ -1,11 +1,11 @@
 services:
   mysql-db:
     image: mysql:8.0
-    container_name: mysql-sales-db
+    container_name: mysql-tacocloud-db
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: sales_db
+      MYSQL_DATABASE: tacocloud_db
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin123
     ports:
@@ -14,29 +14,29 @@ services:
       - mysql_data:/var/lib/mysql
       - ./mysql-init:/docker-entrypoint-initdb.d
     networks:
-      - sales-network
+      - tacocloud-network
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  summit-api:  # Cambiado de sales-api a summit-api
+  tacocloud-api:
     build: .
-    container_name: summit-api  # Cambiado a summit-api
+    container_name: tacocloud-api
     restart: unless-stopped
     ports:
       - "8085:8085"
     environment:
       SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/sales_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-db:3306/tacocloud_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin123
-#    depends_on:
-#      mysql-db:
- #       condition: service_healthy
+    #    depends_on:
+    #      mysql-db:
+    #        condition: service_healthy
     networks:
-      - sales-network
+      - tacocloud-network
     volumes:
       - ./logs:/app/logs
 
@@ -44,5 +44,5 @@ volumes:
   mysql_data:
 
 networks:
-  sales-network:
+  tacocloud-network:
     driver: bridge

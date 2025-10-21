@@ -6,11 +6,8 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Etapa final
-FROM eclipse-temurin:17-jdk-alpine
-VOLUME /tmp
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
-
-
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/*.jar TacoCloud.jar
 EXPOSE 8085
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-jar", "TacoCloud.jar"]

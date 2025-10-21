@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.api</groupId>
-	<artifactId>Summit-API</artifactId>
+	<artifactId>TacoCloud</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Summit-API</name>
+	<name>TacoCloud</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

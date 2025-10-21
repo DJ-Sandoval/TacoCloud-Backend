@@ -175,4 +175,10 @@ public class ClienteServiceImpl implements ClienteService {
         return clienteExcelReportService.generateClientesExcelReport(negocioId, tipoReporte);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public long countByNegocioId(Long negocioId) {
+        return clienteRepository.countByNegocioId(negocioId);
+    }
+
 }

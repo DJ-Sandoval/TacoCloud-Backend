@@ -20,4 +20,5 @@ public interface ClienteService {
     void deleteByIdAndNegocioId(Long id, Long negocioId);
     byte[] generateClientesReportPdf(Long negocioId, String tipoReporte);
     byte[] generateClientesExcelReport(Long negocioId, String tipoReporte);
+    long countByNegocioId(Long negocioId);
 }
